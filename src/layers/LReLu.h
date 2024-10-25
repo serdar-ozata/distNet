@@ -30,7 +30,7 @@ public:
     Matrix * backward(Matrix *error, int step) override {
         for (int i = 0; i < input->m; i++) {
             for (int j = 0; j < input->n; j++) {
-                input->data[i][j] = (input->data[i][j] > 0) ? error->data[i][j] : alpha * error->data[i][j];
+                error->data[i][j] *= input->data[i][j] > 0 ? 1 : alpha;
             }
         }
         return error;

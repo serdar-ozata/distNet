@@ -34,7 +34,7 @@ public:
     Matrix * backward(Matrix *error, int step) override {
         for (int i = 0; i < input->m; i++) {
             for (int j = 0; j < input->n; j++) {
-                input->data[i][j] = mask[i * input->n + j] * error->data[i][j];
+                error->data[i][j] = mask[i * input->n + j] * error->data[i][j];
             }
         }
         return error;
