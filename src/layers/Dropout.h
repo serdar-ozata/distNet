@@ -39,6 +39,9 @@ public:
         }
         return error;
     }
+    ~Dropout() {
+        delete[] mask;
+    }
 };
 
 

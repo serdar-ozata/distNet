@@ -91,6 +91,16 @@ public:
             }
         }
     }
+    ~FullyConnected() {
+        free_matrix(weights);
+        free_matrix(bias);
+        free_matrix(m_weights);
+        free_matrix(m_bias);
+        free_matrix(v_weights);
+        free_matrix(v_bias);
+        free_matrix(weights_grad);
+        free_matrix(bias_grad);
+    }
 };
 
 #endif //DISTNET_FULLYCONNECTED_H
