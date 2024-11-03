@@ -17,6 +17,8 @@ add_executable(distNet main.cpp
         src/layers/Convolutional.h
         src/NeuralNet.cpp
         src/NeuralNet.h
+        src/util/io.h
+        src/util/io.cpp
         src/loss/Loss.cpp
         src/loss/Loss.h
         src/loss/SoftmaxCEntropyClassification.h)
