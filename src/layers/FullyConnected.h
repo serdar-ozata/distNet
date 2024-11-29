@@ -98,8 +98,8 @@ public:
         free_matrix(m_bias);
         free_matrix(v_weights);
         free_matrix(v_bias);
-        free_matrix(weights_grad);
-        free_matrix(bias_grad);
+        //free_matrix(weights_grad);
+        //free_matrix(bias_grad);
     }
 };
 
