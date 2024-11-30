@@ -25,4 +25,5 @@ int main(int argc, char **argv) {
     net.train(3);
     printf("done\n");
     MPI_Finalize();
+    return 0;
 }
