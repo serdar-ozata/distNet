@@ -32,6 +32,17 @@ CSVTable readCSV(std::istream& input) {
 CSVMatrix csv2Mat(const CSVTable& table) {
     CSVMatrix csvmat;
     csvmat.headers = table.headers;
+    // the matrix is row-major, and it is double**
+    csvmat.data.m = table.data.size();
+    csvmat.data.n = table.headers.size();
+    csvmat.data.data = new double*[csvmat.data.m];
+    for (int i = 0; i < csvmat.data.m; i++) {
+        csvmat.data.data[i] = new double[csvmat.data.n];
+        for (int j = 0; j < csvmat.data.n; j++) {
+            csvmat.data.data[i][j] = std::stod(table.data[i][j]);
+        }
+    }
+
     return csvmat;
 }
 
