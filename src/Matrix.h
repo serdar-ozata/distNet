@@ -4,7 +4,7 @@
 
 #ifndef DISTNET_MATRIX_H
 #define DISTNET_MATRIX_H
-
+#include <iostream>
 
 typedef struct {
     int m;
@@ -25,6 +25,9 @@ void GEMM_TN(Matrix *A, Matrix *B, Matrix *C);
 void matrix_fill(Matrix *mat, double value);
 
 void matrix_random(Matrix *mat, unsigned int seed);
+
+// operator << for matrix datatype
+std::ostream &operator<<(std::ostream &os, const Matrix &matrix);
 
 
 #endif //DISTNET_MATRIX_H

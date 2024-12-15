@@ -93,4 +93,6 @@ CSVMatrix csv2Mat(const CSVTable &table);
 
 //void writeCSV(std::ostream &output, const CSVTable &table); // might be unnecessary
 
+std::ostream &operator<<(std::ostream &os, const CSVMatrix &mat); // output in CSV format
+
 #endif //DISTNET_IO_H

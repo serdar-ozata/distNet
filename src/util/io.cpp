@@ -46,4 +46,26 @@ CSVMatrix csv2Mat(const CSVTable& table) {
     return csvmat;
 }
 
+std::ostream& operator<<(std::ostream& os, const CSVMatrix& mat) {
+    // output in CSV format
+    // output headers first
+    for (int i = 0; i < mat.headers.size(); i++) {
+        os << mat.headers[i];
+        if (i < mat.headers.size() - 1) {
+            os << ',';
+        }
+    }
+    os << std::endl;
+    for (int i = 0; i < mat.data.m; i++) {
+        for (int j = 0; j < mat.data.n; j++) {
+            os << mat.data.data[i][j];
+            if (j < mat.data.n - 1) {
+                os << ',';
+            }
+        }
+        os << '\n';
+    }
+    return os;
+}
+
 

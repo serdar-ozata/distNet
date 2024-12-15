@@ -75,3 +75,13 @@ void matrix_random(Matrix *mat, unsigned int seed) {
         }
     }
 }
+
+std::ostream& operator<<(std::ostream& os, const Matrix& matrix) {
+    for (int i = 0; i < matrix.m; i++) {
+        for (int j = 0; j < matrix.n; j++) {
+            os << matrix.data[i][j] << " ";
+        }
+        os << std::endl;
+    }
+    return os;
+}
