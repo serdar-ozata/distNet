@@ -20,11 +20,11 @@ public:
         for (int i = 0; i < out->m; i++) {
             double sum = 0;
             for (int j = 0; j < out->n; j++) {
-                softmax->data[i][j] = exp(out->data[i][j]);
-                sum += softmax->data[i][j];
+                softmax->data[out->n * i + j] = exp(out->data[out->n * i + j]);
+                sum += softmax->data[out->n * i + j];
             }
             for (int j = 0; j < out->n; j++) {
-                softmax->data[i][j] /= sum;
+                softmax->data[out->n * i + j] /= sum;
             }
         }
         double tp = 0, global_tp = 0;
@@ -32,13 +32,13 @@ public:
         for (int i = 0; i < out->m; i++) {
             int maxIndex = 0;
             for (int j = 0; j < out->n; j++) {
-                if (softmax->data[i][j] > softmax->data[i][maxIndex]) {
+                if (softmax->data[out->n * i + j] > softmax->data[out->n * i + maxIndex]) {
                     maxIndex = j;
                 }
             }
             int maxIndexLabel = 0;
             for (int j = 0; j < out->n; j++) {
-                if (labels->data[i][j] > labels->data[i][maxIndexLabel]) {
+                if (labels->data[out->n * i + j] > labels->data[out->n * i + maxIndexLabel]) {
                     maxIndexLabel = j;
                 }
             }
@@ -60,19 +60,18 @@ public:
         for (int i = 0; i < out->m; i++) {
             double sum = 0;
             for (int j = 0; j < out->n; j++) {
-                error->data[i][j] = exp(out->data[i][j]);
-                sum += error->data[i][j];
+                error->data[out->n * i + j] = exp(out->data[out->n * i + j]);
+                sum += error->data[out->n * i + j];
             }
             for (int j = 0; j < out->n; j++) {
-                error->data[i][j] /= sum;
+                error->data[out->n * i + j] /= sum;
             }
         }
 
-        for (int i = 0; i < out->m; i++) {
-            for (int j = 0; j < out->n; j++) {
-                error->data[i][j] = error->data[i][j] - labels->data[i][j];
-            }
+        for (int i = 0; i < out->m * out->n; i++) {
+            error->data[i] = error->data[i] - labels->data[i];
         }
+
         return error;
     }
 };

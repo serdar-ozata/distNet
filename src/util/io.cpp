@@ -35,11 +35,10 @@ CSVMatrix csv2Mat(const CSVTable& table) {
     // the matrix is row-major, and it is double**
     csvmat.data.m = table.data.size();
     csvmat.data.n = table.headers.size();
-    csvmat.data.data = new double*[csvmat.data.m];
+    csvmat.data.data = (double*) malloc(csvmat.data.m * csvmat.data.n * sizeof(double));
     for (int i = 0; i < csvmat.data.m; i++) {
-        csvmat.data.data[i] = new double[csvmat.data.n];
         for (int j = 0; j < csvmat.data.n; j++) {
-            csvmat.data.data[i][j] = std::stod(table.data[i][j]);
+            csvmat.data.data[csvmat.data.n * i + j] = std::stod(table.data[i][j]);
         }
     }
 
@@ -58,7 +57,7 @@ std::ostream& operator<<(std::ostream& os, const CSVMatrix& mat) {
     os << std::endl;
     for (int i = 0; i < mat.data.m; i++) {
         for (int j = 0; j < mat.data.n; j++) {
-            os << mat.data.data[i][j];
+            os << mat.data.data[mat.data.n * i + j];
             if (j < mat.data.n - 1) {
                 os << ',';
             }

@@ -22,9 +22,6 @@ struct CSVMatrix {
     CSVMatrix() = default;
 
     ~CSVMatrix() {
-        for (int i = 0; i < data.m; i++) {
-            free(data.data[i]);
-        }
         free(data.data);
     }
 
@@ -33,12 +30,9 @@ struct CSVMatrix {
         headers = other.headers;
         data.m = other.data.m;
         data.n = other.data.n;
-        data.data = (double **) malloc(data.m * sizeof(double *));
-        for (int i = 0; i < data.m; i++) {
-            data.data[i] = (double *) malloc(data.n * sizeof(double));
-            for (int j = 0; j < data.n; j++) {
-                data.data[i][j] = other.data.data[i][j];
-            }
+        data.data = (double *) malloc(data.m * data.n * sizeof(double *));
+        for (int i = 0; i < data.m * data.n; i++) {
+            data.data[i] = other.data.data[i];
         }
     }
 
@@ -46,19 +40,13 @@ struct CSVMatrix {
         if (this == &other) {
             return *this;
         }
-        for (int i = 0; i < data.m; i++) {
-            free(data.data[i]);
-        }
         free(data.data);
         headers = other.headers;
         data.m = other.data.m;
         data.n = other.data.n;
-        data.data = (double **) malloc(data.m * sizeof(double *));
-        for (int i = 0; i < data.m; i++) {
-            data.data[i] = (double *) malloc(data.n * sizeof(double));
-            for (int j = 0; j < data.n; j++) {
-                data.data[i][j] = other.data.data[i][j];
-            }
+        data.data = (double *) malloc(data.m * data.n * sizeof(double *));
+        for (int i = 0; i < data.m * data.n; i++) {
+            data.data[i] = other.data.data[i];
         }
         return *this;
     }
@@ -74,9 +62,6 @@ struct CSVMatrix {
     CSVMatrix& operator=(CSVMatrix &&other) noexcept {
         if (this == &other) {
             return *this;
-        }
-        for (int i = 0; i < data.m; i++) {
-            free(data.data[i]);
         }
         free(data.data);
         headers = std::move(other.headers);

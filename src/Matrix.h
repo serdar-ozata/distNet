@@ -9,7 +9,7 @@
 typedef struct {
     int m;
     int n;
-    double **data;
+    double *data;
 } Matrix;
 
 Matrix *create_matrix(int m, int n);

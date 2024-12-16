@@ -41,7 +41,7 @@ public:
         } else {
             matrix_fill(weights, 0);
         }
-        MPI_Bcast(weights->data[0], weights->m * weights->n, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+        MPI_Bcast(weights->data, weights->m * weights->n, MPI_DOUBLE, 0, MPI_COMM_WORLD);
         matrix_fill(bias, 0);
         matrix_fill(m_weights, 0);
         matrix_fill(m_bias, 0);
@@ -53,7 +53,7 @@ public:
         GEMM(input, weights, output);
         for (int i = 0; i < output->m; i++) {
             for (int j = 0; j < output->n; j++) {
-                output->data[i][j] += bias->data[0][j];
+                output->data[output->n * i + j] += bias->data[j];
             }
         }
     }
@@ -64,14 +64,14 @@ public:
         GEMM_NT(error, weights, new_error);
         GEMM_TN(input, error, weights_grad);
         for (int i = 0; i < bias_grad->n; i++) {
-            bias_grad->data[0][i] = 0;
+            bias_grad->data[i] = 0;
             for (int j = 0; j < error->m; j++) {
-                bias_grad->data[0][i] += error->data[j][i];
+                bias_grad->data[i] += error->data[i];
             }
         }
         // sum grads
-        MPI_Allreduce(MPI_IN_PLACE, weights_grad->data[0], weights_grad->m * weights_grad->n, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-        MPI_Allreduce(MPI_IN_PLACE, bias_grad->data[0], bias_grad->m * bias_grad->n, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+        MPI_Allreduce(MPI_IN_PLACE, weights_grad->data, weights_grad->m * weights_grad->n, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+        MPI_Allreduce(MPI_IN_PLACE, bias_grad->data, bias_grad->m * bias_grad->n, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
         // backprop
         back_prop(weights_grad, m_weights, v_weights, step);
         back_prop(bias_grad, m_bias, v_bias, step);
@@ -83,11 +83,11 @@ public:
     void back_prop(Matrix *grad, Matrix *m, Matrix *v, int step) {
         for (int i = 0; i < grad->m; i++) {
             for (int j = 0; j < grad->n; j++) {
-                m->data[i][j] = beta1 * m->data[i][j] + (1 - beta1) * grad->data[i][j];
-                v->data[i][j] = beta2 * v->data[i][j] + (1 - beta2) * grad->data[i][j] * grad->data[i][j];
-                double m_hat = m->data[i][j] / (1 - pow(beta1, step));
-                double v_hat = v->data[i][j] / (1 - pow(beta2, step));
-                grad->data[i][j] -= lr * m_hat / (sqrt(v_hat) + epsilon);
+                m->data[grad->n * i + j] = beta1 * m->data[grad->n * i + j] + (1 - beta1) * grad->data[grad->n * i + j];
+                v->data[grad->n * i + j] = beta2 * v->data[grad->n * i + j] + (1 - beta2) * grad->data[grad->n * i + j] * grad->data[grad->n * i + j];
+                double m_hat = m->data[grad->n * i + j] / (1 - pow(beta1, step));
+                double v_hat = v->data[grad->n * i + j] / (1 - pow(beta2, step));
+                grad->data[grad->n * i + j] -= lr * m_hat / (sqrt(v_hat) + epsilon);
             }
         }
     }

@@ -16,14 +16,14 @@ int main(int argc, char **argv) {
     // only process with id 0 will print
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    // if (rank == 0)
-    //     std::cout << mat1 << std::endl;
+    if (rank == 0)
+        std::cout << mat1 << std::endl;
     Matrix *input = &(mat1.data);
     // matrix_fill(input, 1);
     std::ifstream file2("biggerwepouns.csv");
     CSVMatrix mat2 = csv2Mat(readCSV(file2));
-    // if (rank == 0)
-    //     std::cout << mat2 << std::endl;
+    if (rank == 0)
+        std::cout << mat2 << std::endl;
     Matrix *labels = &(mat2.data);
     // matrix_fill(labels, 1);
     auto *loss = new SoftmaxCEntropyClassification(labels);
@@ -38,7 +38,8 @@ int main(int argc, char **argv) {
     net.add_layer(&fcn2);
 
     net.train(3);
-    printf("done\n");
+    printf("%d done\n", rank);
     MPI_Finalize();
+    std::cout << rank << " out" << std::endl;
     return 0;
 }

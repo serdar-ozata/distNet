@@ -5,7 +5,6 @@
 #ifndef DISTNET_LRELU_H
 #define DISTNET_LRELU_H
 
-
 #include <cmath>
 #include "ActivationLayer.h"
 
@@ -20,18 +19,14 @@ public:
     }
 
     void forward() override {
-        for (int i = 0; i < input->m; i++) {
-            for (int j = 0; j < input->n; j++) {
-                output->data[i][j] = fmax(alpha * input->data[i][j], input->data[i][j]);
-            }
+        for (int i = 0; i < input->m * input->n; i++) {
+            output->data[i] = fmax(alpha * input->data[i], input->data[i]);
         }
     }
 
     Matrix * backward(Matrix *error, int step) override {
-        for (int i = 0; i < input->m; i++) {
-            for (int j = 0; j < input->n; j++) {
-                error->data[i][j] *= input->data[i][j] > 0 ? 1 : alpha;
-            }
+        for (int i = 0; i < input->m * input->n; i++) {
+            error->data[i] *= input->data[i] > 0 ? 1 : alpha;
         }
         return error;
     }
