@@ -8,6 +8,7 @@
 
 #include "src/util/io.h"
 #include "src/loss/LogLoss.h"
+#include "src/layers/Dropout.h"
 
 int main(int argc, char **argv) {
     MPI_Init(&argc, &argv);
@@ -29,10 +30,14 @@ int main(int argc, char **argv) {
 
     FullyConnected fcn1(net.get_final_output(), 10);
     net.add_layer(&fcn1);
+    Dropout dropout(net.get_final_output(), 0.2);
+    net.add_layer(&dropout);
     ReLu reLu1(net.get_final_output());
     net.add_layer(&reLu1);
     FullyConnected fcn2(net.get_final_output(), 5);
     net.add_layer(&fcn2);
+    Dropout dropout2(net.get_final_output(), 0.2);
+    net.add_layer(&dropout2);
     ReLu reLu2(net.get_final_output());
     net.add_layer(&reLu2);
     FullyConnected fcn3(net.get_final_output(), 1);

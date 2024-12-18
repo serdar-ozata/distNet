@@ -35,7 +35,7 @@ public:
         int world_rank;
         MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
         if (world_rank == 0) {
-            printf("Loss: %f\n", -total_loss);
+//            printf("Loss: %f\n", -total_loss);
         }
         // accuracy
         int correct = 0;
@@ -51,7 +51,7 @@ public:
         int world_size;
         MPI_Comm_size(MPI_COMM_WORLD, &world_size);
         if (world_rank == 0) {
-            printf("Accuracy: %f\n", (double) total_correct / (world_size * out->m));
+//            printf("Accuracy: %f\n", (double) total_correct / (world_size * out->m));
         }
     }
     // we have to take the derivative of both sigmoid and log loss

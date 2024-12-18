@@ -23,7 +23,10 @@ void NeuralNet::add_layer(Layer *layer) {
 }
 
 void NeuralNet::train(int epochs) {
+    double* starts = (double*) malloc(sizeof(double) * epochs);
+    double* ends = (double*) malloc(sizeof(double) * epochs);
     for (int i = 0; i < epochs; i++) {
+        starts[i] = MPI_Wtime();
         for (Layer* layer: layers) {
             layer->forward();
         }
@@ -34,7 +37,20 @@ void NeuralNet::train(int epochs) {
             error = layers[k]->backward(error, i + 1); // step size shouldn't be 0
         }
         free_matrix(error);
+        ends[i] = MPI_Wtime();
     }
+    double avg_time = 0;
+    for (int i = 0; i < epochs; i++) {
+        avg_time += ends[i] - starts[i];
+    }
+    avg_time /= epochs;
+    int rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    if (rank == 0) {
+        printf("Average time for epoch: %f\n", avg_time);
+    }
+    free(starts);
+    free(ends);
 }
 
 void NeuralNet::test(Matrix* features, Matrix* labels) {
