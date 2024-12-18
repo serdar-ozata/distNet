@@ -27,15 +27,23 @@ void NeuralNet::train(int epochs) {
         for (Layer* layer: layers) {
             layer->forward();
         }
+
+        loss->eval(get_final_output());
         Matrix *error = loss->get_error_prime(get_final_output());
         for (int k = layers.size() - 1; k >= 0; k--) {
-            error = layers[k]->backward(error, i);
+            error = layers[k]->backward(error, i + 1); // step size shouldn't be 0
         }
         free_matrix(error);
     }
 }
 
-void NeuralNet::test() {
+void NeuralNet::test(Matrix* features, Matrix* labels) {
+    layers[0]->input = features;
+    for (Layer* layer: layers) {
+        layer->input = features;
+        layer->forward();
+    }
+
     for (auto &layer: layers) {
         layer->forward();
     }

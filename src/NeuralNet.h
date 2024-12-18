@@ -23,7 +23,7 @@ public:
     NeuralNet(Matrix *input, Loss* loss);
 //    void change_input(Matrix *input); not important for now
     void train(int epochs);
-    void test();
+    void test(Matrix* features, Matrix* labels);
     Matrix *get_final_output(); // to bind to new layer
     void add_layer(Layer *layer);
 };

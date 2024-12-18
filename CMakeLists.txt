@@ -22,7 +22,8 @@ add_executable(distNet main.cpp
         src/util/io.cpp
         src/loss/Loss.cpp
         src/loss/Loss.h
-        src/loss/SoftmaxCEntropyClassification.h)
+        src/loss/SoftmaxCEntropyClassification.h
+        src/loss/LogLoss.h)
 
 target_link_libraries(distNet m)
 target_link_libraries(distNet  MPI::MPI_CXX)

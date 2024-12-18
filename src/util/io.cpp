@@ -3,6 +3,7 @@
 //
 #include "io.h"
 #include <unordered_map>
+#include <mpi.h>
 
 using std::string;
 CSVTable readCSV(std::istream& input) {
@@ -28,17 +29,39 @@ CSVTable readCSV(std::istream& input) {
     }
     return table;
 }
+void getCSVRankIdx(const CSVTable &table, int& start, int& end) {
+    int rank, size;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &size);
+    int rows = table.data.size();
+    int rows_per_proc = rows / size;
+    int remainder = rows % size;
+    if (rank < remainder) {
+        start = rank * (rows_per_proc + 1);
+        end = start + rows_per_proc + 1;
+    } else {
+        start = rank * rows_per_proc + remainder;
+        end = start + rows_per_proc;
+    }
+}
 
 CSVMatrix csv2Mat(const CSVTable& table) {
+    int start, end;
+    getCSVRankIdx(table, start, end);
+
     CSVMatrix csvmat;
     csvmat.headers = table.headers;
     // the matrix is row-major, and it is double**
-    csvmat.data.m = table.data.size();
+    csvmat.data.m = end - start;
     csvmat.data.n = table.headers.size();
     csvmat.data.data = (double*) malloc(csvmat.data.m * csvmat.data.n * sizeof(double));
-    for (int i = 0; i < csvmat.data.m; i++) {
+    for (int i = start; i < end; i++) {
         for (int j = 0; j < csvmat.data.n; j++) {
-            csvmat.data.data[csvmat.data.n * i + j] = std::stod(table.data[i][j]);
+            try {csvmat.data.data[(i - start) * csvmat.data.n + j] = std::stod(table.data[i][j]);}
+            catch (std::invalid_argument& e)
+            {
+                csvmat.data.data[(i - start) * csvmat.data.n + j] = 0;
+            }
         }
     }
 

@@ -71,10 +71,33 @@ struct CSVMatrix {
         other.data.data = nullptr;
         return *this;
     }
+    // to string
+    std::string to_string() {
+        std::string str;
+        for (int i = 0; i < headers.size(); i++) {
+            str += headers[i];
+            if (i < headers.size() - 1) {
+                str += ',';
+            }
+        }
+        str += '\n';
+        for (int i = 0; i < data.m; i++) {
+            for (int j = 0; j < data.n; j++) {
+                str += std::to_string(data.data[data.n * i + j]);
+                if (j < data.n - 1) {
+                    str += ',';
+                }
+            }
+            str += '\n';
+        }
+        return str;
+    }
 };
 
 CSVTable readCSV(std::istream &input);
 CSVMatrix csv2Mat(const CSVTable &table);
+
+void getCSVRankIdx(const CSVTable &table, int& start, int& end);
 
 //void writeCSV(std::ostream &output, const CSVTable &table); // might be unnecessary
 

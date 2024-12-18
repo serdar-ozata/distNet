@@ -7,39 +7,45 @@
 #include <fstream>
 
 #include "src/util/io.h"
+#include "src/loss/LogLoss.h"
 
 int main(int argc, char **argv) {
     MPI_Init(&argc, &argv);
-    // sleep(10); // gdb
-    std::ifstream file1("moreboolets.csv");
-    CSVMatrix mat1 = csv2Mat(readCSV(file1));
-    // only process with id 0 will print
+//    sleep(5); // gdb
+    std::ifstream features_csv("data/airline_passenger_satisfaction_x.csv");
+    std::ifstream labels_csv("data/airline_passenger_satisfaction_y.csv");
+    CSVMatrix mat1 = csv2Mat(readCSV(features_csv));
+    CSVMatrix mat2 = csv2Mat(readCSV(labels_csv));
+    Matrix *input = &(mat1.data);
+    Matrix *labels = &(mat2.data);
+    // for now work for only 20 data items
+//    if (input->m > 20) {
+//        input->m = 20;
+//        labels->m = 20;
+//    }
+    if (input->m != labels->m) {
+        std::cerr << "The number of samples in the input and labels do not match ";
+        std::raise(SIGABRT);
+    }
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    if (rank == 0)
-        std::cout << mat1 << std::endl;
-    Matrix *input = &(mat1.data);
-    // matrix_fill(input, 1);
-    std::ifstream file2("biggerwepouns.csv");
-    CSVMatrix mat2 = csv2Mat(readCSV(file2));
-    if (rank == 0)
-        std::cout << mat2 << std::endl;
-    Matrix *labels = &(mat2.data);
-    // matrix_fill(labels, 1);
-    auto *loss = new SoftmaxCEntropyClassification(labels);
+    if (rank == 0) {
+        printf("Input matrix: %d x %d\n", input->m, input->n);
+    }
+    auto *loss = new LogLoss(labels);
     NeuralNet net(input, loss);
 
-    FullyConnected fcn1(net.get_final_output(), 4);
-    ReLu reLu1(net.get_final_output());
-    FullyConnected fcn2(net.get_final_output(), 2);
-
+    FullyConnected fcn1(net.get_final_output(), 10);
     net.add_layer(&fcn1);
+    ReLu reLu1(net.get_final_output());
     net.add_layer(&reLu1);
+    FullyConnected fcn2(net.get_final_output(), 5);
     net.add_layer(&fcn2);
-
-    net.train(3);
-    printf("%d done\n", rank);
+    ReLu reLu2(net.get_final_output());
+    net.add_layer(&reLu2);
+    FullyConnected fcn3(net.get_final_output(), 1);
+    net.add_layer(&fcn3);
+    net.train(500);
     MPI_Finalize();
-    std::cout << rank << " out" << std::endl;
     return 0;
 }
