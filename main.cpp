@@ -18,11 +18,6 @@ int main(int argc, char **argv) {
     CSVMatrix mat2 = csv2Mat(readCSV(labels_csv));
     Matrix *input = &(mat1.data);
     Matrix *labels = &(mat2.data);
-    // for now work for only 20 data items
-//    if (input->m > 20) {
-//        input->m = 20;
-//        labels->m = 20;
-//    }
     if (input->m != labels->m) {
         std::cerr << "The number of samples in the input and labels do not match ";
         std::raise(SIGABRT);

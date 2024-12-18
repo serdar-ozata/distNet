@@ -105,10 +105,6 @@ public:
         free_matrix(weights_grad);
         free_matrix(bias_grad);
     }
-    void changeDataSize(int new_m){
-        free_matrix(output);
-        output = create_matrix(new_m, output->n);
-    }
 };
 
 #endif //DISTNET_FULLYCONNECTED_H
