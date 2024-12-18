@@ -38,9 +38,9 @@ void NeuralNet::train(int epochs) {
 }
 
 void NeuralNet::test(Matrix* features, Matrix* labels) {
-    layers[0]->input = features;
-    for (Layer* layer: layers) {
-        layer->changeDataSize(features->m);
+    for (int i = 0; i < layers.size(); i++) {
+        layers[i]->changeDataSize(features);
+        features = layers[i]->output;
     }
 
     for (auto &layer: layers) {

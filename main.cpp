@@ -24,9 +24,6 @@ int main(int argc, char **argv) {
     }
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    if (rank == 0) {
-        printf("Input matrix: %d x %d\n", input->m, input->n);
-    }
     auto *loss = new LogLoss(labels);
     NeuralNet net(input, loss);
 
@@ -41,6 +38,7 @@ int main(int argc, char **argv) {
     FullyConnected fcn3(net.get_final_output(), 1);
     net.add_layer(&fcn3);
     net.train(500);
+    net.test(input, labels);
     MPI_Finalize();
     return 0;
 }

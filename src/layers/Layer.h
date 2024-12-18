@@ -22,10 +22,11 @@ public:
             free_matrix(output);
         }
     }
-    void changeDataSize(int new_m){
-        Matrix* t = create_matrix(new_m, output->n);
+    void changeDataSize(Matrix * inp){
+        Matrix* t = create_matrix(inp->m, output->n);
         free_matrix(output);
         output = t;
+        input = inp;
     }
 };
 
