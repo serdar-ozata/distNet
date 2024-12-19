@@ -16,7 +16,7 @@ public:
     Matrix * labels;
     Loss(Matrix *labels);
     virtual Matrix *get_error_prime(Matrix *out) = 0;
-    virtual void eval(Matrix* out) = 0;
+    virtual void eval(Matrix* out, bool print_out) = 0;
     void checkDims(Matrix *out);
 };
 

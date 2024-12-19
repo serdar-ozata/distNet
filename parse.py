@@ -6,12 +6,27 @@ def preprocess_data(file_path):
 
     categorical_columns = ['Gender', 'Customer Type', 'Type of Travel', 'Class', 'Satisfaction']
     label_encoders = {}
-    for col in categorical_columns:
+
+    # Identify columns with 3 or more unique values for one-hot encoding
+    one_hot_columns = [col for col in categorical_columns if data[col].nunique() >= 3]
+    label_encoded_columns = [col for col in categorical_columns if col not in one_hot_columns]
+
+    # Apply label encoding to columns with fewer than 3 unique values
+    for col in label_encoded_columns:
         le = LabelEncoder()
         data[col] = le.fit_transform(data[col])
         label_encoders[col] = le
 
-    data['Satisfaction'] = data['Satisfaction']
+    # Apply one-hot encoding to columns with 3 or more unique values
+    data = pd.get_dummies(data, columns=one_hot_columns, drop_first=False)
+
+    # Ensure one-hot encoded columns are binary (0/1)
+    for col in data.columns:
+        if set(data[col].unique()) <= {0, 1}:
+            data[col] = data[col].astype(int)
+
+    # Convert 'Satisfaction' to binary (0/1)
+    data['Satisfaction'] = data['Satisfaction'].astype(int)
 
     numeric_columns = [
         'Age', 'Flight Distance', 'Departure Delay', 'Arrival Delay',

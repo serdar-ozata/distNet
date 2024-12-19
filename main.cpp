@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
     net.add_layer(&reLu2);
     FullyConnected fcn3(net.get_final_output(), 1);
     net.add_layer(&fcn3);
-    net.train(500);
+    net.train(1000);
     net.test(input, labels);
     MPI_Finalize();
     return 0;

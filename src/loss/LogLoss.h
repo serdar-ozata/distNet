@@ -16,7 +16,7 @@ public:
         return 1 / (1 + exp(-x));
     }
     double epsilon = 1e-10; // small value to prevent log(0)
-    void eval(Matrix *out) override {
+    void eval(Matrix *out, bool print_out) override {
         checkDims(out);
         if (out->n != 1) {
             printf("Error: LogLoss is only for binary classification\n");
@@ -34,8 +34,8 @@ public:
         MPI_Reduce(&loss, &total_loss, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
         int world_rank;
         MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
-        if (world_rank == 0) {
-//            printf("Loss: %f\n", -total_loss);
+        if (world_rank == 0 && print_out) {
+            printf("Loss: %f\n", -total_loss);
         }
         // accuracy
         int correct = 0;
@@ -50,8 +50,8 @@ public:
         MPI_Reduce(&correct, &total_correct, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
         int world_size;
         MPI_Comm_size(MPI_COMM_WORLD, &world_size);
-        if (world_rank == 0) {
-//            printf("Accuracy: %f\n", (double) total_correct / (world_size * out->m));
+        if (world_rank == 0&& print_out) {
+            printf("Accuracy: %f\n", (double) total_correct / (world_size * out->m));
         }
     }
     // we have to take the derivative of both sigmoid and log loss

@@ -31,7 +31,7 @@ void NeuralNet::train(int epochs) {
             layer->forward();
         }
 
-        loss->eval(get_final_output());
+        loss->eval(get_final_output(), false);
         Matrix *error = loss->get_error_prime(get_final_output());
         for (int k = layers.size() - 1; k >= 0; k--) {
             error = layers[k]->backward(error, i + 1); // step size shouldn't be 0
@@ -62,6 +62,6 @@ void NeuralNet::test(Matrix* features, Matrix* labels) {
     for (auto &layer: layers) {
         layer->forward();
     }
-    loss->eval(get_final_output());
+    loss->eval(get_final_output(), true);
 }
 

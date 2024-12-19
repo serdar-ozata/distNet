@@ -12,7 +12,7 @@ class SoftmaxCEntropyClassification: public Loss {
 public:
     SoftmaxCEntropyClassification(Matrix *labels) : Loss(labels) {}
     // todo: upgrade so that it can output more information
-    void eval(Matrix *out) override {
+    void eval(Matrix *out, bool print_out) override {
         int world_rank;
         MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
         checkDims(out);
@@ -49,7 +49,7 @@ public:
         }
         MPI_Reduce(&tp, &global_tp, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
         MPI_Reduce(&total, &global_total, 1, MPI_UNSIGNED, MPI_SUM, 0, MPI_COMM_WORLD);
-        if (world_rank == 0) {
+        if (world_rank == 0 && print_out) {
             printf("Accuracy: %f\n", global_tp / global_total);
         }
     }
