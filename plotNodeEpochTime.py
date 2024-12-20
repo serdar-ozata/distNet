@@ -29,12 +29,12 @@ def plot_metrics(file_path, output_path):
         computation_times.append(comp_time)
 
     # Create the plot
-    plt.plot(nodes, computation_times, label='Avg Computation Time', color='green', marker='o')
+    plt.plot(nodes, computation_times, label='Avg Computation Time per Epoch', color='green', marker='o')
 
     # Add labels and title
     plt.xlabel('Number of Nodes')
     plt.ylabel('Average Computation Time (in seconds)')
-    plt.title('Computation Time vs Number of Nodes')
+    plt.title('Computation Time per Epoch vs Number of Nodes')
     plt.legend()
 
     # Save the plot as an image file
